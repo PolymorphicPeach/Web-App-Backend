@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Base64;
 import java.util.Map;
 
 @RestController
@@ -26,7 +25,7 @@ public class APIController {
     private final KeyConfigurationProperties keys;
 
     @Autowired
-    APIController(CryptographyService cryptographyService,
+    public APIController(CryptographyService cryptographyService,
                   ByteReaderService byteReaderService,
                   ProjectRepository projectRepository,
                   KeyConfigurationProperties keys){
@@ -67,7 +66,7 @@ public class APIController {
     // ===========================================
     @PostMapping("/aerial")
     public ResponseEntity<String> aerialClassification(@RequestBody Map<String, String> request){
-        String imageUrl = buildGoogleMapURL(request);
+        String imageUrl = buildGoogleMapURL(request, 600);
         //String microserviceUrl = "http://localhost:5000/aerial";
         String microserviceUrl = "http://mlservice:5000/aerial";
 
@@ -79,7 +78,7 @@ public class APIController {
 
     @PostMapping("/static-map-proxy")
     public ResponseEntity<byte[]> proxyStaticMap(@RequestBody Map<String, String> request){
-        String googleMapAddress = buildGoogleMapURL(request);
+        String googleMapAddress = buildGoogleMapURL(request, 200);
 
         try {
             byte[] imageBytes = byteReaderService.getFromURL(new URL(googleMapAddress));
@@ -114,7 +113,7 @@ public class APIController {
     // ===========================================
     //               Helpers
     // ===========================================
-    private String buildGoogleMapURL(Map<String, String> request){
+    private String buildGoogleMapURL(Map<String, String> request, int size){
         StringBuilder googleMapAddress = new StringBuilder();
         googleMapAddress.append("https://maps.googleapis.com/maps/api/staticmap?center=");
         googleMapAddress.append(request.get("latitude"));
@@ -122,7 +121,11 @@ public class APIController {
         googleMapAddress.append(request.get("longitude"));
         googleMapAddress.append("&zoom=");
         googleMapAddress.append(request.get("zoom"));
-        googleMapAddress.append("&size=600x600&maptype=satellite&key=");
+        googleMapAddress.append("&size=");
+        googleMapAddress.append(size);
+        googleMapAddress.append("x");
+        googleMapAddress.append(size);
+        googleMapAddress.append("&maptype=satellite&key=");
         googleMapAddress.append(keys.GOOGLE_MAP_KEY());
         return googleMapAddress.toString();
     }
