@@ -6,6 +6,7 @@ import matthewpeach.backend.repository.ProjectRepository;
 import matthewpeach.backend.service.ByteReaderService;
 import matthewpeach.backend.service.CryptographyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -65,10 +66,13 @@ public class APIController {
     //        Aerial Classification Endpoints
     // ===========================================
     @PostMapping("/aerial")
-    public ResponseEntity<String> aerialClassification(@RequestBody Map<String, String> request){
+    public ResponseEntity<String> aerialClassification(
+            @RequestBody Map<String, String> request,
+            @Value("${}") String microserviceUrl
+    ){
         String imageUrl = buildGoogleMapURL(request, 600);
         //String microserviceUrl = "http://localhost:5000/aerial";
-        String microserviceUrl = "http://mlservice:5000/aerial";
+        //String microserviceUrl = "http://mlservice:5000/aerial";
 
         HttpEntity<String> requestEntity = new HttpEntity<>(imageUrl);
         ResponseEntity<String> responseEntity = restTemplate.exchange(microserviceUrl, HttpMethod.POST, requestEntity, String.class);
