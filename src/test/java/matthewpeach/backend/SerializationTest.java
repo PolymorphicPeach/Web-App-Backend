@@ -1,4 +1,4 @@
-package matthewpeach.backend.integration.controller;
+package matthewpeach.backend;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

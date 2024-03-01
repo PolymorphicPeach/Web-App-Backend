@@ -1,4 +1,4 @@
-package matthewpeach.backend.integration.controller;
+package matthewpeach.backend;
 
 import matthewpeach.backend.configuration.KeyConfigurationProperties;
 import matthewpeach.backend.controller.APIController;
