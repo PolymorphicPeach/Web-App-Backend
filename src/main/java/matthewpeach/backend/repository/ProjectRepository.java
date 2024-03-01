@@ -1,7 +1,6 @@
 package matthewpeach.backend.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import matthewpeach.backend.data_objects.Project;
 import matthewpeach.backend.data_objects.SkillCount;
 import org.springframework.stereotype.Component;
@@ -87,21 +86,15 @@ public class ProjectRepository {
         return projects;
     }
 
-    public String getProjectsJSON() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return objectMapper.writeValueAsString(projects);
-    }
-
-    public String getSkillsCount() throws JsonProcessingException {
-        List<String> rawSkills = new ArrayList<>();
+    public List<SkillCount> getSkillsCount() throws JsonProcessingException {
+        List<String> skills = new ArrayList<>();
 
         for(Project project : projects){
             String[] currentSkills = project.getSkills().split("[ ,]+");
-            rawSkills.addAll(Arrays.asList(currentSkills));
+            skills.addAll(Arrays.asList(currentSkills));
         }
 
-        Map<String, Long> skillCount = rawSkills
+        Map<String, Long> skillCountMap = skills
                 .stream()
                 .collect(
                         Collectors.groupingBy(
@@ -110,13 +103,12 @@ public class ProjectRepository {
                         )
                 );
 
-        List<SkillCount> objs = new ArrayList<>();
-        skillCount.forEach((skill, count) -> {
-            objs.add(new SkillCount(skill, count.intValue()));
+        List<SkillCount> skillCounts = new ArrayList<>();
+
+        skillCountMap.forEach((skill, count) -> {
+            skillCounts.add(new SkillCount(skill, count.intValue()));
         });
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return objectMapper.writeValueAsString(objs);
+        return skillCounts;
     }
 }

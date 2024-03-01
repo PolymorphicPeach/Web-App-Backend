@@ -1,7 +1,9 @@
 package matthewpeach.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import matthewpeach.backend.configuration.KeyConfigurationProperties;
+import matthewpeach.backend.data_objects.CaesarCiphertext;
 import matthewpeach.backend.repository.ProjectRepository;
 import matthewpeach.backend.service.ByteReaderService;
 import matthewpeach.backend.service.CryptographyService;
@@ -24,12 +26,14 @@ public class APIController {
     private final ByteReaderService byteReaderService;
     private final ProjectRepository projectRepository;
     private final KeyConfigurationProperties keys;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public APIController(CryptographyService cryptographyService,
-                  ByteReaderService byteReaderService,
-                  ProjectRepository projectRepository,
-                  KeyConfigurationProperties keys){
+    public APIController(ObjectMapper objectMapper, CryptographyService cryptographyService,
+                         ByteReaderService byteReaderService, ProjectRepository projectRepository,
+                         KeyConfigurationProperties keys){
+
+        this.objectMapper = objectMapper;
         this.cryptographyService = cryptographyService;
         this.byteReaderService = byteReaderService;
         this.projectRepository = projectRepository;
@@ -45,7 +49,10 @@ public class APIController {
     @GetMapping("/skills")
     public ResponseEntity<String> getSkills(){
         try {
-            return new ResponseEntity<>(projectRepository.getSkillsCount(), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    objectMapper.writeValueAsString(projectRepository.getSkillsCount()),
+                    HttpStatus.OK
+            );
         }
         catch (JsonProcessingException e) {
             return new ResponseEntity<>("", HttpStatus.NOT_FOUND);
@@ -55,7 +62,10 @@ public class APIController {
     @GetMapping("/projects")
     public ResponseEntity<String> getProjects(){
         try{
-            return new ResponseEntity<>(projectRepository.getProjectsJSON(), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    objectMapper.writeValueAsString(projectRepository.getProjects()),
+                    HttpStatus.OK
+            );
         }
         catch(JsonProcessingException e){
             return new ResponseEntity<>("", HttpStatus.NOT_FOUND);
@@ -71,9 +81,6 @@ public class APIController {
             @Value("${}") String microserviceUrl
     ){
         String imageUrl = buildGoogleMapURL(request, 600);
-        //String microserviceUrl = "http://localhost:5000/aerial";
-        //String microserviceUrl = "http://mlservice:5000/aerial";
-
         HttpEntity<String> requestEntity = new HttpEntity<>(imageUrl);
         ResponseEntity<String> responseEntity = restTemplate.exchange(microserviceUrl, HttpMethod.POST, requestEntity, String.class);
 
@@ -90,7 +97,8 @@ public class APIController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.IMAGE_PNG);
             return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -103,9 +111,11 @@ public class APIController {
         String plaintext = request.get("plaintext");
         int privateKey = Integer.parseInt(request.get("key"));
 
+        CaesarCiphertext caesarCiphertext = cryptographyService.caesarEncrypt(plaintext, privateKey);
         String json = null;
+
         try {
-            json = cryptographyService.caesarEncrypt(plaintext, privateKey);
+            json = objectMapper.writeValueAsString(caesarCiphertext);
         }
         catch (JsonProcessingException e) {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);

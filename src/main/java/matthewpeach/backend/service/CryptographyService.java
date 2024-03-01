@@ -1,22 +1,16 @@
 package matthewpeach.backend.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import matthewpeach.backend.data_objects.CaesarCiphertext;
-import matthewpeach.backend.data_objects.LetterFrequency;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
 public class CryptographyService {
-    public String caesarEncrypt(String plaintext, int key) throws JsonProcessingException {
+    public CaesarCiphertext caesarEncrypt(String plaintext, int key){
         StringBuilder cipherText = new StringBuilder();
-        Map<String, Integer> frequenciesMap = new HashMap<>();
-        List<LetterFrequency> frequencies = new ArrayList<>();
+        Map<String, Integer> letterFrequency = new HashMap<>();
 
         for(int i = 0; i < plaintext.length(); ++i){
             char currentChar = plaintext.charAt(i);
@@ -25,13 +19,13 @@ public class CryptographyService {
                 char lowerCaseChar = Character.toLowerCase(currentChar);
                 char convertedChar = (char) (key + (int) lowerCaseChar % 127);
 
-                if(!frequenciesMap.containsKey(String.valueOf(convertedChar))){
-                    frequenciesMap.put(String.valueOf(convertedChar), 1);
+                if(!letterFrequency.containsKey(String.valueOf(convertedChar))){
+                    letterFrequency.put(String.valueOf(convertedChar), 1);
                 }
                 else{
-                    frequenciesMap.put(
+                    letterFrequency.put(
                             String.valueOf(convertedChar),
-                            frequenciesMap.get(String.valueOf(convertedChar)) + 1
+                            letterFrequency.get(String.valueOf(convertedChar)) + 1
                     );
                 }
                 cipherText.append(convertedChar);
@@ -41,13 +35,7 @@ public class CryptographyService {
             }
         }
 
-        for(Map.Entry<String, Integer> entry : frequenciesMap.entrySet()){
-            frequencies.add(new LetterFrequency(entry.getKey().charAt(0), entry.getValue()));
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        CaesarCiphertext data = new CaesarCiphertext(cipherText.toString(), frequencies);
-        return objectMapper.writeValueAsString(data);
+        return new CaesarCiphertext(cipherText.toString(), letterFrequency);
     }
 
     public String caesarDecrypt(String ciphertext, int key){

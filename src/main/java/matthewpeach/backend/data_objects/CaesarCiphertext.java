@@ -1,10 +1,10 @@
 package matthewpeach.backend.data_objects;
 
-import java.util.List;
+import java.util.Map;
 
 public class CaesarCiphertext {
     private String text;
-    List<LetterFrequency> cipherFrequencies;
+    Map<String, Integer> letterFrequency;
 
     // https://www3.nd.edu/~busiforc/handouts/cryptography/letterfrequencies.html
 
@@ -12,9 +12,9 @@ public class CaesarCiphertext {
         // Empty required for Jackson library
     }
 
-    public CaesarCiphertext(String text, List<LetterFrequency> cipherFrequencies) {
+    public CaesarCiphertext(String text, Map<String, Integer> letterFrequency) {
         this.text = text;
-        this.cipherFrequencies = cipherFrequencies;
+        this.letterFrequency = letterFrequency;
     }
 
     public String getText() {
@@ -25,11 +25,11 @@ public class CaesarCiphertext {
         this.text = text;
     }
 
-    public List<LetterFrequency> getCipherFrequencies() {
-        return cipherFrequencies;
+    public Map<String, Integer> getLetterFrequencies() {
+        return letterFrequency;
     }
 
-    public void setCipherFrequencies(List<LetterFrequency> cipherFrequencies) {
-        this.cipherFrequencies = cipherFrequencies;
+    public void setLetterFrequencies(Map<String, Integer> letterFrequencies) {
+        this.letterFrequency = letterFrequencies;
     }
 }
