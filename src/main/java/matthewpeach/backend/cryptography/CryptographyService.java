@@ -1,6 +1,6 @@
-package matthewpeach.backend.service;
+package matthewpeach.backend.cryptography;
 
-import matthewpeach.backend.data_objects.CaesarCiphertext;
+import matthewpeach.backend.cryptography.CaesarCiphertext;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

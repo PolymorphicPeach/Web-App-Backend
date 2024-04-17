@@ -3,10 +3,10 @@ package matthewpeach.backend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import matthewpeach.backend.configuration.KeyConfigurationProperties;
-import matthewpeach.backend.data_objects.CaesarCiphertext;
-import matthewpeach.backend.repository.ProjectRepository;
-import matthewpeach.backend.service.ByteReaderService;
-import matthewpeach.backend.service.CryptographyService;
+import matthewpeach.backend.cryptography.CaesarCiphertext;
+import matthewpeach.backend.projects.ProjectRepository;
+import matthewpeach.backend.cryptography.ByteReaderService;
+import matthewpeach.backend.cryptography.CryptographyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -78,7 +78,7 @@ public class APIController {
     @PostMapping("/aerial")
     public ResponseEntity<String> aerialClassification(
             @RequestBody Map<String, String> request,
-            @Value("${}") String microserviceUrl
+            @Value("${url.aerialClassification}") String microserviceUrl
     ){
         String imageUrl = buildGoogleMapURL(request, 600);
         HttpEntity<String> requestEntity = new HttpEntity<>(imageUrl);

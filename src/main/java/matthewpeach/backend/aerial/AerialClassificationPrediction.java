@@ -1,4 +1,4 @@
-package matthewpeach.backend.data_objects;
+package matthewpeach.backend.aerial;
 
 //Class Codes
 //        'BareLand': 0,

@@ -1,4 +1,4 @@
-package matthewpeach.backend.service;
+package matthewpeach.backend.cryptography;
 
 import org.springframework.stereotype.Service;
 

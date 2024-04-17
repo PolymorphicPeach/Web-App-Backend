@@ -1,8 +1,6 @@
-package matthewpeach.backend.repository;
+package matthewpeach.backend.projects;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import matthewpeach.backend.data_objects.Project;
-import matthewpeach.backend.data_objects.SkillCount;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
